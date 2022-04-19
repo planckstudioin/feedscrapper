@@ -14,9 +14,12 @@ class Scrapper(Resource):
 
         u = request.args.get('query')
         p = request.args.get('page')
+        o = request.args.get('orientation')
+        premium = request.args.get('premium')
+        e = request.args.get('extra')
 
-        url = "https://www.freepik.com/search?format=search&orientation=square&page=" + \
-            str(p) + "&query=" + u
+        url = "https://www.freepik.com/search?format=search&orientation="+o+"&premium=&"+premium+"&page=" + \
+            str(p) + "&query=" + u + e
 
         headers = {
             'User-Agent': "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36"
