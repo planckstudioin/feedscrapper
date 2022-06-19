@@ -67,7 +67,7 @@ class Instagram(object):
                 fg.author( {'name':user["data"]["user"]["full_name"]} )
                 fe.title("@"+username)
                 fe.link(href=li)
-                p = self.save_img(url, edges["node"]["shortcode"])
+                # p = self.save_img(url, edges["node"]["shortcode"])
                 # img64 = self.get_as_base64(url)
                 # img = "<img src='data:image/png;base64,'"+str(img64)+"' alt=''/>"
                 # d = time.strftime('%Y-%m-%d %H:%M:%S', datetime.fromtimestamp(edges["node"]["taken_at_timestamp"]))
