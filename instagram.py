@@ -3,6 +3,7 @@ import json
 import time
 import base64
 import wget
+import os
 from datetime import datetime
 from decouple import config
 from feedgen.feed import FeedGenerator
@@ -13,11 +14,17 @@ class Instagram(object):
         self.host = "http://127.0.0.1:5000/"
         print("init")
 
+    def create_dir(self,path):
+        isExist = os.path.exists(path)
+        if not isExist:
+            os.makedirs(path)
+
     def get_as_base64(self,url):
         return base64.b64encode(requests.get(url).content)
 
     def save_img(self,url, name):
         path = "./tmp/img/" + name + ".jpg"
+        self.create_dir(path)
         wget.download(row[1], out=path)
         return path
     
@@ -99,6 +106,7 @@ class Instagram(object):
         }
 
         response = requests.request("GET", url, headers=headers, data=payload)
+        self.create_dir("./tmp/media.json")
         with open("./tmp/media.json", "w") as f:
             f.write(response.text)
         return response.text
