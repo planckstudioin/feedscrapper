@@ -43,6 +43,7 @@ class Instagram(object):
 
     def gen_user_media_rss(self,username, total, next=""):
         user = self.get_user(username)
+        self.create_dir("./tmp/user.json")
         with open("./tmp/user.json", "w") as f:
             f.write(json.dumps(user))
         data = json.loads(self.get_user_media(user["data"]["user"]["id"],total,next))
@@ -106,7 +107,7 @@ class Instagram(object):
         }
 
         response = requests.request("GET", url, headers=headers, data=payload)
-        self.create_dir("./tmp/media.json")
-        with open("./tmp/media.json", "w") as f:
-            f.write(response.text)
+        # self.create_dir("./tmp/media.json")
+        # with open("./tmp/media.json", "w") as f:
+        #     f.write(response.text)
         return response.text
