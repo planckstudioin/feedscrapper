@@ -1,7 +1,9 @@
 import json
 import requests
+import instagram
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify, request
+from flask import Response
 from flask_restful import Resource, Api
 from flask_cors import CORS
 
@@ -9,9 +11,22 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
-class Scrapper(Resource):
-    def get(self):
+@app.route('/instagram/user/<username>')
+def feed_instagram_user(username):
+    s = """Hello Instagram user, {u}"""
+    ig = instagram.Instagram()
+    fg = ig.gen_user_media_rss(username, 12)
+    r = Response(response=fg.rss_str(pretty=True), status=200, mimetype="application/rss+xml")
+    r.headers["Content-Type"] = "text/xml; charset=utf-8"
+    return r
 
+@app.route('/instagram/hashtag/<hashtag>')
+def feed_instagram_hashtag(hashtag):
+    s = """Hello Instagram #, {u}"""
+    return s.format(u=hashtag)
+
+class FeedScrapper(Resource):
+    def get(self):
         u = request.args.get('query')
         p = request.args.get('page')
         o = request.args.get('orientation')
@@ -45,7 +60,7 @@ class Scrapper(Resource):
         text = json.dumps(res, sort_keys=True, indent=4)
         return res
 
-api.add_resource(Scrapper,'/freepik/', methods = ['GET'])
+api.add_resource(FeedScrapper,'/freepik/', methods = ['GET'])
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=1001, debug=True)
