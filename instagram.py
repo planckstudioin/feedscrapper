@@ -10,7 +10,6 @@ import wget
 
 class Instagram(object):
     def __init__(self):
-        self.host = "http://127.0.0.1:5000/"
         print("init")
 
     def create_dir(self,path):
@@ -70,10 +69,7 @@ class Instagram(object):
                 fg.author( {'name':user["data"]["user"]["full_name"]} )
                 fe.title("@"+username)
                 fe.link(href=li)
-                encodedBytes = base64.b64encode(url.encode("utf-8"))
-                encodedStr = str(encodedBytes, "utf-8")
-                dumpurl = "https://feed.planckstudio.in/api/img.php?url=" + encodedStr
-                imgurl = "http://127.0.0.1:5000/img/" + str(edges["node"]["shortcode"])
+                imgurl = config('HOST') + "img/" + str(edges["node"]["shortcode"])
                 self.save_img(url, edges["node"]["shortcode"])
                 img = '<div><img src="'+imgurl+'" width="1080px" height="1080px" alt="" /></div>'
                 try:
