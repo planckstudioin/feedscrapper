@@ -1,15 +1,29 @@
 import json
 import requests
 import instagram
+import os
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify, request
 from flask import Response
 from flask_restful import Resource, Api
 from flask_cors import CORS
+from flask import send_file
 
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
+
+@app.route('/clean')
+def remove_img():
+    directory = "./tmp/img/"
+    os.system("find " + directory + " -mtime +7 -delete")
+    s = """Deleted"""
+    return s
+
+@app.route('/img/<id>')
+def feed_img(id):
+    p = "./tmp/img/" + id + ".jpg"
+    return send_file(p, mimetype='image/jpg')
 
 @app.route('/instagram/user/<username>')
 def feed_instagram_user(username):

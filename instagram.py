@@ -5,25 +5,31 @@ import os
 from decouple import config
 from feedgen.feed import FeedGenerator
 import urllib.parse
+import base64
+import wget
 
 class Instagram(object):
     def __init__(self):
         self.host = "http://127.0.0.1:5000/"
         print("init")
 
-    # def create_dir(self,path):
-    #     isExist = os.path.exists(path)
-    #     if not isExist:
-    #         os.makedirs(path)
+    def create_dir(self,path):
+        isExist = os.path.exists(path)
+        if not isExist:
+            os.makedirs(path)
 
-    # def get_as_base64(self,url):
-    #     return base64.b64encode(requests.get(url).content)
+    def get_as_base64(self,url):
+        return base64.b64encode(requests.get(url).content)
 
-    # def save_img(self,url, name):
-    #     path = "./tmp/img/" + name + ".jpg"
-    #     self.create_dir("./tmp/img/")
-    #     wget.download(row[1], out=path)
-    #     return path
+    def save_img(self,url, name):
+        path = "./tmp/img/" + name + ".jpg"
+        isExist = os.path.exists(path)
+
+        if isExist:
+            print("img exists")
+        else:
+            self.create_dir("./tmp/img/")
+            wget.download(url, out=path)
     
     def get_user(self,username):
         payload = {}
@@ -40,9 +46,6 @@ class Instagram(object):
 
     def gen_user_media_rss(self,username, total, next=""):
         user = self.get_user(username)
-        # self.create_dir("./tmp/")
-        # with open("./tmp/user.json", "w") as f:
-        #     f.write(json.dumps(user))
         data = json.loads(self.get_user_media(user["data"]["user"]["id"],total,next))
         
         fg = FeedGenerator()
@@ -67,13 +70,14 @@ class Instagram(object):
                 fg.author( {'name':user["data"]["user"]["full_name"]} )
                 fe.title("@"+username)
                 fe.link(href=li)
-                # p = self.save_img(url, edges["node"]["shortcode"])
-                # img64 = self.get_as_base64(url)
-                # img = "<img src='data:image/png;base64,'"+str(img64)+"' alt=''/>"
-                # d = time.strftime('%Y-%m-%d %H:%M:%S', datetime.fromtimestamp(edges["node"]["taken_at_timestamp"]))
-                # fe.pubDate(pubDate=d)
-                fe.content(type='encoded',content='<![CDATA[ '+url+' /> ]]>')
+                encodedBytes = base64.b64encode(url.encode("utf-8"))
+                encodedStr = str(encodedBytes, "utf-8")
+                dumpurl = "https://feed.planckstudio.in/api/img.php?url=" + encodedStr
+                imgurl = "http://127.0.0.1:5000/img/" + str(edges["node"]["shortcode"])
+                self.save_img(url, edges["node"]["shortcode"])
+                img = '<div><img src="'+imgurl+'" width="1080px" height="1080px" alt="" /></div>'
                 try:
+                    fe.content(type='encoded',content='<![CDATA[ '+ img +'')
                     fe.description(edges["node"]["edge_media_to_caption"]["edges"][0]["node"]["text"])
                 except IndexError:
                     print("No caption")
@@ -104,7 +108,4 @@ class Instagram(object):
         }
 
         response = requests.request("GET", url, headers=headers, data=payload)
-        # self.create_dir("./tmp/")
-        # with open("./tmp/media.json", "w") as f:
-        #     f.write(response.text)
         return response.text
