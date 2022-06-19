@@ -1,10 +1,7 @@
 import requests
 import json
 import time
-import base64
-import wget
 import os
-from datetime import datetime
 from decouple import config
 from feedgen.feed import FeedGenerator
 import urllib.parse
@@ -14,19 +11,19 @@ class Instagram(object):
         self.host = "http://127.0.0.1:5000/"
         print("init")
 
-    def create_dir(self,path):
-        isExist = os.path.exists(path)
-        if not isExist:
-            os.makedirs(path)
+    # def create_dir(self,path):
+    #     isExist = os.path.exists(path)
+    #     if not isExist:
+    #         os.makedirs(path)
 
-    def get_as_base64(self,url):
-        return base64.b64encode(requests.get(url).content)
+    # def get_as_base64(self,url):
+    #     return base64.b64encode(requests.get(url).content)
 
-    def save_img(self,url, name):
-        path = "./tmp/img/" + name + ".jpg"
-        self.create_dir("./tmp/img/")
-        wget.download(row[1], out=path)
-        return path
+    # def save_img(self,url, name):
+    #     path = "./tmp/img/" + name + ".jpg"
+    #     self.create_dir("./tmp/img/")
+    #     wget.download(row[1], out=path)
+    #     return path
     
     def get_user(self,username):
         payload = {}
@@ -43,9 +40,9 @@ class Instagram(object):
 
     def gen_user_media_rss(self,username, total, next=""):
         user = self.get_user(username)
-        self.create_dir("./tmp/")
-        with open("./tmp/user.json", "w") as f:
-            f.write(json.dumps(user))
+        # self.create_dir("./tmp/")
+        # with open("./tmp/user.json", "w") as f:
+        #     f.write(json.dumps(user))
         data = json.loads(self.get_user_media(user["data"]["user"]["id"],total,next))
         
         fg = FeedGenerator()
@@ -107,7 +104,7 @@ class Instagram(object):
         }
 
         response = requests.request("GET", url, headers=headers, data=payload)
-        self.create_dir("./tmp/")
-        with open("./tmp/media.json", "w") as f:
-            f.write(response.text)
+        # self.create_dir("./tmp/")
+        # with open("./tmp/media.json", "w") as f:
+        #     f.write(response.text)
         return response.text
