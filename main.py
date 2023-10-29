@@ -79,7 +79,7 @@ class FeedScrapper(Resource):
         #     "keywords": u
         # }
 
-       if response.status_code == 200:
+        if response.status_code == 200:
             data = BeautifulSoup(response.text, 'html.parser')
 
             # Find all <figure> elements
