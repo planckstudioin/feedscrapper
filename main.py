@@ -39,6 +39,11 @@ def feed_instagram_hashtag(hashtag):
     s = """Hello Instagram #, {u}"""
     return s.format(u=hashtag)
 
+@app.route('/status')
+def status():
+    s = '''{"status": "OK"}'''
+    return s
+
 class FeedScrapper(Resource):
     def get(self):
         u = request.args.get('query')
