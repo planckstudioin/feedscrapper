@@ -61,25 +61,54 @@ class FeedScrapper(Resource):
         }
 
         response = requests.request("GET", url, headers=headers)
-        data = BeautifulSoup(response.text, 'html.parser')
-        # find all with the image tag
-        images = data.find_all('img', src=True, class_="lzy")
-        print(images)
-        image_src = [x['data-src'] for x in images]
-        img = []
+        
+        # data = BeautifulSoup(response.text, 'html.parser')
+        # # find all with the image tag
+        # images = data.find_all('img', src=True, class_="lzy")
+        # print(images)
+        # image_src = [x['data-src'] for x in images]
+        # img = []
 
-        for i in image_src:
-            iu = i.split(".jpg")
-            img.append(iu[0] + ".jpg")
+        # for i in image_src:
+        #     iu = i.split(".jpg")
+        #     img.append(iu[0] + ".jpg")
 
-        res = {
-            "url": str(url),
-            "img": img,
-            "keywords": u
-        }
+        # res = {
+        #     "url": str(url),
+        #     "img": img,
+        #     "keywords": u
+        # }
 
-        text = json.dumps(res, sort_keys=True, indent=4)
-        return res
+       if response.status_code == 200:
+            data = BeautifulSoup(response.text, 'html.parser')
+
+            # Find all <figure> elements
+            figure_tags = data.find_all('figure', class_='showcase__item')
+
+            img_urls = []
+
+            # Extract image URLs from the data-image attribute
+            for figure in figure_tags:
+                data_image_attr = figure.get('data-image')
+                if data_image_attr:
+                    img_urls.append(data_image_attr)
+
+            res = {
+                "url": url,
+                "img": img_urls,
+                "keywords": str(u)
+            }
+
+            return res
+        else:
+            myerror = {
+                "url": url,
+                "keywords": str(u),
+                "message": "Failed to retrieve images"
+            }
+
+            return myerror
+        
 
 api.add_resource(FeedScrapper,'/freepik/', methods = ['GET'])
 
