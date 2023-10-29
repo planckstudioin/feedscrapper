@@ -73,7 +73,7 @@ class FeedScrapper(Resource):
             img.append(iu[0] + ".jpg")
 
         res = {
-            "url": str(url,)
+            "url": str(url),
             "img": img,
             "keywords": u
         }
